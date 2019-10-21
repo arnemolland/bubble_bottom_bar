@@ -65,12 +65,14 @@ class _BottomNavigationTile extends StatelessWidget {
     this.indexLabel,
     this.ink = false,
     this.inkColor,
+    this.onLongPress,
   }) : assert(selected != null);
 
   final BubbleBottomBarItem item;
   final Animation<double> animation;
   final double iconSize;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
   final ColorTween colorTween;
   final double flex;
   final bool selected;
@@ -113,12 +115,12 @@ class _BottomNavigationTile extends StatelessWidget {
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
-                    color:
-                        selected ? item.backgroundColor.withOpacity(opacity) : Colors.transparent,
-                    borderRadius: BorderRadius.horizontal(
-                      right: Radius.circular(50),
-                      left: Radius.circular(50),
-                    )),
+                  color: selected ? item.backgroundColor.withOpacity(opacity) : Colors.transparent,
+                  borderRadius: BorderRadius.horizontal(
+                    right: Radius.circular(50),
+                    left: Radius.circular(50),
+                  ),
+                ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment:
@@ -330,6 +332,9 @@ class _BottomNavigationBarState extends State<BubbleBottomBar> with TickerProvid
           onTap: () {
             if (widget.onTap != null) widget.onTap(i);
           },
+          onLongPress: () {
+            if (widget.items[i].onLongPress != null) widget.items[i].onLongPress();
+          },
           flex: _evaluateFlex(_animations[i]),
           selected: i == widget.currentIndex,
           indexLabel: localizations.tabLabel(tabIndex: i + 1, tabCount: widget.items.length),
@@ -340,10 +345,11 @@ class _BottomNavigationBarState extends State<BubbleBottomBar> with TickerProvid
     }
     if (widget.fabLocation == BubbleBottomBarFabLocation.center) {
       children.insert(
-          1,
-          Spacer(
-            flex: 1500,
-          ));
+        1,
+        Spacer(
+          flex: 1500,
+        ),
+      );
     }
     return children;
   }
@@ -390,24 +396,25 @@ class _BottomNavigationBarState extends State<BubbleBottomBar> with TickerProvid
     final double additionalBottomPadding =
         math.max(MediaQuery.of(context).padding.bottom - _kBottomMargin, 0.0);
     return Semantics(
-        explicitChildNodes: true,
-        child: widget.hasNotch
-            ? PhysicalShape(
-                elevation: widget.elevation != null ? widget.elevation : 8.0,
-                color: widget.backgroundColor != null ? widget.backgroundColor : Colors.white,
-                clipper: _BubbleBottomBarClipper(
-                  shape: CircularNotchedRectangle(),
-                  geometry: geometryListenable,
-                  notchMargin: 8,
-                ),
-                child: _inner(additionalBottomPadding),
-              )
-            : Material(
-                elevation: widget.elevation != null ? widget.elevation : 8.0,
-                color: widget.backgroundColor != null ? widget.backgroundColor : Colors.white,
-                child: _inner(additionalBottomPadding),
-                borderRadius: widget.borderRadius != null ? widget.borderRadius : BorderRadius.zero,
-              ));
+      explicitChildNodes: true,
+      child: widget.hasNotch
+          ? PhysicalShape(
+              elevation: widget.elevation != null ? widget.elevation : 8.0,
+              color: widget.backgroundColor != null ? widget.backgroundColor : Colors.white,
+              clipper: _BubbleBottomBarClipper(
+                shape: CircularNotchedRectangle(),
+                geometry: geometryListenable,
+                notchMargin: 8,
+              ),
+              child: _inner(additionalBottomPadding),
+            )
+          : Material(
+              elevation: widget.elevation != null ? widget.elevation : 8.0,
+              color: widget.backgroundColor != null ? widget.backgroundColor : Colors.white,
+              child: _inner(additionalBottomPadding),
+              borderRadius: widget.borderRadius != null ? widget.borderRadius : BorderRadius.zero,
+            ),
+    );
   }
 }
 
