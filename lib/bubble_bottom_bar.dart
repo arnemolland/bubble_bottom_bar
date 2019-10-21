@@ -25,7 +25,6 @@ class BubbleBottomBar extends StatefulWidget {
     this.hasInk = false,
     this.inkColor,
     this.fabLocation,
-    this.onLongPress,
   })  : assert(items != null),
         assert(items.length >= 2),
         assert(
@@ -38,7 +37,6 @@ class BubbleBottomBar extends StatefulWidget {
 
   final List<BubbleBottomBarItem> items;
   final ValueChanged<int> onTap;
-  final VoidCallback onLongPress;
   int currentIndex;
   final double iconSize;
   final double opacity;
@@ -67,14 +65,12 @@ class _BottomNavigationTile extends StatelessWidget {
     this.indexLabel,
     this.ink = false,
     this.inkColor,
-    this.onLongPress,
   }) : assert(selected != null);
 
   final BubbleBottomBarItem item;
   final Animation<double> animation;
   final double iconSize;
   final VoidCallback onTap;
-  final VoidCallback onLongPress;
   final ColorTween colorTween;
   final double flex;
   final bool selected;
@@ -109,7 +105,7 @@ class _BottomNavigationTile extends StatelessWidget {
               ),
               containedInkWell: true,
               onTap: onTap,
-              onLongPress: onLongPress,
+              onLongPress: item.onLongPress,
               splashColor: ink
                   ? inkColor != null ? inkColor : Theme.of(context).splashColor
                   : Colors.transparent,
@@ -334,9 +330,6 @@ class _BottomNavigationBarState extends State<BubbleBottomBar> with TickerProvid
           onTap: () {
             if (widget.onTap != null) widget.onTap(i);
           },
-          onLongPress: () {
-            if (widget.onLongPress != null) widget.onLongPress();
-          },
           flex: _evaluateFlex(_animations[i]),
           selected: i == widget.currentIndex,
           indexLabel: localizations.tabLabel(tabIndex: i + 1, tabCount: widget.items.length),
@@ -424,12 +417,14 @@ class BubbleBottomBarItem {
     this.title,
     Widget activeIcon,
     this.backgroundColor,
+    this.onLongPress,
   })  : activeIcon = activeIcon ?? icon,
         assert(icon != null);
   final Widget icon;
   final Widget activeIcon;
   final Widget title;
   final Color backgroundColor;
+  final VoidCallback onLongPress;
 }
 
 class _BubbleBottomBarClipper extends CustomClipper<Path> {
