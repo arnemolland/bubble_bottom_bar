@@ -107,7 +107,7 @@ class _BottomNavigationTile extends StatelessWidget {
               ),
               containedInkWell: true,
               onTap: onTap,
-              onLongPress: item.onLongPress,
+              onLongPress: onLongPress,
               splashColor: ink
                   ? inkColor != null ? inkColor : Theme.of(context).splashColor
                   : Colors.transparent,
